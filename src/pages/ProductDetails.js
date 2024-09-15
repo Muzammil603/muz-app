@@ -6,28 +6,24 @@ function ProductDetails({ addToCart }) {
   const { id } = useParams();
 
   useEffect(() => {
-    // Fetch product details from JSON file
-    const fetchProduct = async () => {
-      try {
-        const response = await fetch('/products.json');
-        const data = await response.json();
-        const selectedProduct = data.find(product => product.id === parseInt(id));
-        setProduct(selectedProduct);
-      } catch (error) {
-        console.error('Error fetching product details:', error);
-      }
-    };
-
-    fetchProduct();
+    // Fetch product details from localStorage
+    const storedProducts = localStorage.getItem('products');
+    if (storedProducts) {
+      const products = JSON.parse(storedProducts);
+      const selectedProduct = products.find((product) => product.id === id);
+      setProduct(selectedProduct);
+    }
   }, [id]);
+
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart(product);
+    }
+  };
 
   if (!product) {
     return <div>Loading...</div>;
   }
-
-  const handleAddToCart = () => {
-    addToCart(product);
-  };
 
   return (
     <div>
@@ -38,7 +34,7 @@ function ProductDetails({ addToCart }) {
         <>
           <h2>Accessories</h2>
           <ul>
-            {product.accessories.map(accessory => (
+            {product.accessories.map((accessory) => (
               <li key={accessory.id}>{accessory.name}</li>
             ))}
           </ul>

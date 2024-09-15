@@ -6,18 +6,11 @@ function Products() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // Fetch products from JSON file
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('/products.json');
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
+    // Fetch products from AdminPanel component
+    const storedProducts = JSON.parse(localStorage.getItem('products'));
+    if (storedProducts) {
+      setProducts(storedProducts);
+    }
   }, []);
 
   return (
