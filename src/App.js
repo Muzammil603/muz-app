@@ -41,7 +41,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {isLoggedIn && <Header handleLogout={handleLogout} />}
+        {isLoggedIn && <Header handleLogout={handleLogout} setIsLoggedIn={setIsLoggedIn} />}
         <Routes>
           <Route 
             path="/" 

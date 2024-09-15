@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-function Header({ setIsLoggedIn }) {
+function Header({ handleLogout, setIsLoggedIn }) {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userId');
+  const handleLogoutClick = () => {
+    handleLogout();
     setIsLoggedIn(false);
     navigate('/logout');
   };
@@ -20,7 +19,7 @@ function Header({ setIsLoggedIn }) {
           <li><Link to="/cart">Cart</Link></li>
           <li><Link to="/admin">Admin</Link></li>
           <li><Link to="/salesman">Salesman</Link></li>
-          <li><button onClick={handleLogout}>Logout</button></li>
+          <li><button onClick={handleLogoutClick}>Logout</button></li>
         </ul>
       </nav>
     </header>
