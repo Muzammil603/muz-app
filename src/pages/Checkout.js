@@ -21,7 +21,8 @@ function Checkout({ cartItems }) {
       if (currentUser) {
         setCustomerInfo(prevInfo => ({
           ...prevInfo,
-          name: currentUser.name
+          name: currentUser.name,
+          // You might want to add address and credit card here if you store them with user data
         }));
       }
     }
@@ -49,12 +50,20 @@ function Checkout({ cartItems }) {
     const confirmationNumber = generateConfirmationNumber();
     const deliveryDate = generateDeliveryDate();
 
+    const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    const tax = subtotal * 0.125; // 12.5% tax
+    const total = subtotal + tax;
+
     const order = {
+      id: Date.now().toString(),
+      customerId: localStorage.getItem('userId'),
       ...customerInfo,
       confirmationNumber,
       deliveryDate,
       items: cartItems,
-      totalPrice: cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
+      subtotal,
+      tax,
+      total,
       status: 'Pending'
     };
 
@@ -72,7 +81,56 @@ function Checkout({ cartItems }) {
     <div>
       <h1>Checkout</h1>
       <form onSubmit={handleSubmit}>
-        {/* ... (rest of the form fields remain the same) ... */}
+        <div>
+          <label htmlFor="name">Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={customerInfo.name}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="address">Address:</label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            value={customerInfo.address}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="creditCard">Credit Card:</label>
+          <input
+            type="text"
+            id="creditCard"
+            name="creditCard"
+            value={customerInfo.creditCard}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="deliveryOption">Delivery Option:</label>
+          <input
+            type="text"
+            id="deliveryOption"
+            name="deliveryOption"
+            value={customerInfo.deliveryOption}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="pickupLocation">Pickup Location:</label>
+          <input
+            type="text"
+            id="pickupLocation"
+            name="pickupLocation"
+            value={customerInfo.pickupLocation}
+            onChange={handleChange}
+          />
+        </div>
         <button type="submit">Place Order</button>
       </form>
     </div>

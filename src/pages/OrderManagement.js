@@ -9,7 +9,12 @@ function OrderManagement() {
   const [orderFormData, setOrderFormData] = useState({
     customerId: '',
     items: [],
-    status: 'Pending'
+    status: 'Pending',
+    address: '',
+    creditCard: '',
+    subtotal: 0,
+    tax: 0,
+    total: 0
   });
 
   useEffect(() => {
@@ -105,7 +110,17 @@ function OrderManagement() {
         }
       }
       
-      return { ...prevData, items: updatedItems };
+      const subtotal = updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const tax = subtotal * 0.125; // 12.5% tax
+      const total = subtotal + tax;
+
+      return { 
+        ...prevData, 
+        items: updatedItems,
+        subtotal: subtotal,
+        tax: tax,
+        total: total
+      };
     });
   };
 
@@ -141,7 +156,12 @@ function OrderManagement() {
     setOrderFormData({
       customerId: order.customerId,
       items: order.items || [],
-      status: order.status || 'Pending'
+      status: order.status || 'Pending',
+      address: order.address || '',
+      creditCard: order.creditCard || '',
+      subtotal: order.subtotal || 0,
+      tax: order.tax || 0,
+      total: order.total || 0
     });
   };
 
@@ -149,7 +169,12 @@ function OrderManagement() {
     setOrderFormData({
       customerId: '',
       items: [],
-      status: 'Pending'
+      status: 'Pending',
+      address: '',
+      creditCard: '',
+      subtotal: 0,
+      tax: 0,
+      total: 0
     });
   };
 
@@ -190,6 +215,28 @@ function OrderManagement() {
             <option value="Delivered">Delivered</option>
           </select>
         </div>
+        <div>
+          <label htmlFor="address">Address:</label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            value={orderFormData.address}
+            onChange={(e) => setOrderFormData(prevData => ({...prevData, address: e.target.value}))}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="creditCard">Credit Card:</label>
+          <input
+            type="text"
+            id="creditCard"
+            name="creditCard"
+            value={orderFormData.creditCard}
+            onChange={(e) => setOrderFormData(prevData => ({...prevData, creditCard: e.target.value}))}
+            required
+          />
+        </div>
         {orderFormData.items.map((item, index) => (
           <div key={index}>
             <select
@@ -220,6 +267,11 @@ function OrderManagement() {
           </div>
         ))}
         <button type="button" onClick={handleAddItem}>Add Item</button>
+        <div>
+          <p>Subtotal: ${orderFormData.subtotal.toFixed(2)}</p>
+          <p>Tax (12.5%): ${orderFormData.tax.toFixed(2)}</p>
+          <p>Total: ${orderFormData.total.toFixed(2)}</p>
+        </div>
         <button type="submit">{selectedOrder ? 'Update Order' : 'Add Order'}</button>
         {selectedOrder && (
           <button type="button" onClick={() => {
@@ -243,6 +295,10 @@ function OrderManagement() {
               Status: {order.status}
               <br />
               Date: {new Date(order.date).toLocaleString()}
+              <br />
+              Address: {order.address}
+              <br />
+              Credit Card: {order.creditCard}
               <ul>
                 {order.items && order.items.map((item, index) => {
                   const product = products.find(p => p.id === item.productId);
@@ -255,6 +311,9 @@ function OrderManagement() {
                   );
                 })}
               </ul>
+              <p>Subtotal: ${order.subtotal?.toFixed(2)}</p>
+              <p>Tax (12.5%): ${order.tax?.toFixed(2)}</p>
+              <p>Total: ${order.total?.toFixed(2)}</p>
               <button onClick={() => handleSelectOrder(order)}>Edit</button>
               <button onClick={() => handleDeleteOrder(order.id)}>Delete</button>
             </li>
